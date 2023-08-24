@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+  
+  
+  <style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Helvetica', sans-serif;
+  background-color: #34445b;
+}
+
+.chat-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0; /* Updated background color */
+  border-radius: 10px;
+  position: relative;
+}
+
+.chat-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.chat-messages {
+  list-style: none;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.chat-messages li {
+  padding: 10px;
+  background-color: #e6e6e6; /* Updated background color */
+  border-radius: 8px;
+  margin: 5px 0;
+  display: flex;
+}
+
+.chat-messages li.incoming {
+  background-color: #d3d3d3; /* Updated background color */
+  justify-content: flex-start;
+}
+
+.chat-messages li.outgoing {
+  background-color: #c3e6cb; /* Updated background color */
+  justify-content: flex-end;
+}
+
+.chat-messages li p {
+  flex: 1;
+}
+
+.chat-input-form {
+  display: flex;
+  margin-top: 20px;
+}
+
+.chat-input-field {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  background-color: #e0e0e0; /* Updated background color */
+  color: #333;
+  font-size: 14px;
+  outline: none;
+}
+
+.chat-send-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  background-color: #007bff;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chat-send-button:hover {
+  background-color: #0056b3;
+}
+
+      </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h1>WhatsApp Chat</h1>
+    </div>
+    <ul id="messages" class="chat-messages"></ul>
+    <form id="chat-form" class="chat-input-form">
+      <input id="input" class="chat-input-field" autocomplete="off" placeholder="Type a message" />
+      <button class="chat-send-button">Send</button>
+    </form>
+  </div>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+    $(function () {
+      const socket = io();
+
+
+
+      $('form').submit(function () {
+        socket.emit('chat message', $('#input').val());
+        $('#input').val('');
+        return false;
+      });
+
+      socket.on('chat message', function (msg) {
+        $('#messages').append($('<li>').text(msg));
+      });
+      
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('input');
+      
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+      
+          let message = input.value;
+      
+          // Replace words with emojis
+          message = message.replace(/react/gi, '⚛️');
+          message = message.replace(/woah/gi, '😲');
+          message = message.replace(/hey/gi, '👋');
+      
+          // Display the modified message
+          showMessage(message);
+      
+          // Clear the input field
+          input.value = '';
+        });
+
+        function showMessage(msg) {
+            const messagesContainer = document.getElementById('messages');
+            const messageElement = document.createElement('li');
+            messageElement.textContent = msg;
+            messagesContainer.appendChild(messageElement);
+          }
+        });
+
+  </script>
+<!-- <script src="script.js"></script> -->
+</body>
+</html>
